@@ -1,0 +1,35 @@
+body {
+    font-family: Arial;
+    margin: 20px;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    margin-right: 10px;
+    color: blue;
+}
+
+table {
+    border-collapse: collapse;
+    width: 60%;
+}
+
+th, td {
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background-color: #ddd;
+}
+
+button {
+    padding: 8px 15px;
+    background-color: green;
+    color: white;
+    border: none;
+}
