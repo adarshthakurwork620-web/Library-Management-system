@@ -1,21 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>LMS | Smart Library</title>
+    <title>Register</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 
-<body class="bg-gradient-to-br from-blue-500 via-purple-600 to-indigo-700 min-h-screen">
+<body class="bg-gradient-to-r from-green-400 to-blue-500  items-center justify-center justify-items-center h-screen">
 
-<!-- NAVBAR -->
-<div class="flex justify-between items-center p-6 text-white">
-    <h1 class="text-2xl font-bold">📚 LMS</h1>
-    <button onclick="showLogin()" class="bg-white text-blue-600 px-4 py-2 rounded-lg font-semibold">
-        Login
-    </button>
-</div>
-
-<!-- HERO SECTION -->
 <div class="text-center text-white mt-10 px-4">
     <h2 class="text-4xl md:text-5xl font-bold mb-4">
         Smart Library Management System
@@ -45,37 +36,14 @@
 
 </div>
 
-<!-- AUTH CARD -->
-<div id="authBox" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
 
-<div class="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-full max-w-md">
 
-    <h2 id="formTitle" class="text-2xl font-bold text-white text-center mb-6">
-        Login
-    </h2>
 
-    <!-- LOGIN FORM -->
-    <form id="loginForm" method="POST" action="/login" class="space-y-4">
+<div class="bg-white/20 backdrop-blur-lg p-8 rounded-2xl shadow-2xl w-96">
 
-        <input type="email" name="email" placeholder="Email"
-        class="w-full p-3 rounded-lg bg-white/30 text-white placeholder-white outline-none">
+    <h2 class="text-2xl font-bold text-white text-center mb-6">📝 Register</h2>
 
-        <input type="password" name="password" placeholder="Password"
-        class="w-full p-3 rounded-lg bg-white/30 text-white placeholder-white outline-none">
-
-        <button class="w-full bg-blue-500 hover:bg-blue-600 text-white p-3 rounded-lg">
-            Login
-        </button>
-
-        <p class="text-white text-center text-sm">
-            Don't have an account?
-            <span onclick="showRegister()" class="underline cursor-pointer">Register</span>
-        </p>
-
-    </form>
-
-    <!-- REGISTER FORM -->
-    <form id="registerForm" method="POST" action="/register" class="space-y-4 hidden">
+    <form method="POST" class="space-y-4">
 
         <input type="text" name="name" placeholder="Name"
         class="w-full p-3 rounded-lg bg-white/30 text-white placeholder-white outline-none">
@@ -90,32 +58,14 @@
             Register
         </button>
 
-        <p class="text-white text-center text-sm">
-            Already have an account?
-            <span onclick="showLogin()" class="underline cursor-pointer">Login</span>
-        </p>
-
     </form>
 
-</div>
-</div>
+    <p class="text-white text-center mt-4">
+        Already have account?
+        <a href="/login" class="underline">Login</a>
+    </p>
 
-<!-- JS -->
-<script>
-function showLogin() {
-    document.getElementById('authBox').classList.remove('hidden');
-    document.getElementById('loginForm').classList.remove('hidden');
-    document.getElementById('registerForm').classList.add('hidden');
-    document.getElementById('formTitle').innerText = "Login";
-}
-
-function showRegister() {
-    document.getElementById('authBox').classList.remove('hidden');
-    document.getElementById('loginForm').classList.add('hidden');
-    document.getElementById('registerForm').classList.remove('hidden');
-    document.getElementById('formTitle').innerText = "Register";
-}
-</script>
+</div>
 
 </body>
 </html>
