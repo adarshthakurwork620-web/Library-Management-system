@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-import sqlite3
+import psycopg2
+import os
 import bcrypt
 from datetime import date, datetime, timedelta
 
@@ -7,9 +8,11 @@ app = Flask(__name__)
 app.secret_key = "secret123"
 
 # ------------------ DB CONNECTION ------------------
+import psycopg2
+import os
+
 def get_db_connection():
-    conn = sqlite3.connect("library.db")
-    conn.row_factory = sqlite3.Row
+    conn = psycopg2.connect(os.environ.get("DATABASE_URL"))
     return conn
 
 # ------------------ HOME ------------------

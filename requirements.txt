@@ -1,4 +1,4 @@
 flask
 gunicorn
-mysql-connector-python
 bcrypt
+psycopg2-binary
