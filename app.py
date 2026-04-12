@@ -10,7 +10,7 @@ app.secret_key = "secret123"
 
 # ------------------ DB CONNECTION ------------------
 def get_db_connection():
-    return psycopg2.connect(os.environ.get("DATABASE_URL"))
+    return psycopg2.connect(os.environ.get("postgresql://library_db_9qy8_user:NRKVSQafCs3F4AGbuWsR8SJcEpzOfHK3@dpg-d7do5vd7vvec73etufb0-a.ohio-postgres.render.com/library_db_9qy8"))
 
 # ------------------ HOME ------------------
 @app.route('/')
