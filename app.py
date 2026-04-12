@@ -37,7 +37,7 @@ def register():
         cur = conn.cursor()
 
         cur.execute(
-            "INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)",
+            "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
             (name, email, hashed_password, "student")
         )
 
@@ -58,7 +58,7 @@ def login():
         conn = get_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM users WHERE email=?", (email,))
+        cur.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
 
         if user:
@@ -112,7 +112,7 @@ def add_book():
         cur = conn.cursor()
 
         cur.execute(
-            "INSERT INTO books (title, author, quantity) VALUES (?, ?, ?)",
+            "INSERT INTO books (title, author, quantity) VALUES (%s, %s, %s)",
             (title, author, quantity)
         )
 
@@ -132,11 +132,11 @@ def issue_book(book_id):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    cur.execute("SELECT id FROM users WHERE email=?", (session['user'],))
+    cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
     user = cur.fetchone()
     user_id = user["id"]
 
-    cur.execute("SELECT quantity FROM books WHERE id=?", (book_id,))
+    cur.execute("SELECT quantity FROM books WHERE id=%s", (book_id,))
     book = cur.fetchone()
 
     if book["quantity"] <= 0:
@@ -145,11 +145,11 @@ def issue_book(book_id):
     due_date = date.today() + timedelta(days=7)
 
     cur.execute(
-        "INSERT INTO transactions (user_id, book_id, issue_date, due_date, status) VALUES (?, ?, ?, ?, ?)",
+        "INSERT INTO transactions (user_id, book_id, issue_date, due_date, status) VALUES (%s, %s, %s, %s, %s)",
         (user_id, book_id, date.today(), due_date, "issued")
     )
 
-    cur.execute("UPDATE books SET quantity = quantity - 1 WHERE id=?", (book_id,))
+    cur.execute("UPDATE books SET quantity = quantity - 1 WHERE id=%s", (book_id,))
 
     conn.commit()
     conn.close()
@@ -165,13 +165,13 @@ def return_book(book_id):
     conn = get_db_connection()
     cur = conn.cursor()
 
-    cur.execute("SELECT id FROM users WHERE email=?", (session['user'],))
+    cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
     user = cur.fetchone()
     user_id = user["id"]
 
     cur.execute("""
         SELECT id, due_date FROM transactions 
-        WHERE user_id=? AND book_id=? AND status='issued'
+        WHERE user_id=%s AND book_id=%s AND status='issued'
     """, (user_id, book_id))
 
     trans = cur.fetchone()
@@ -184,11 +184,11 @@ def return_book(book_id):
     fine = max(0, days_late * 5)
 
     cur.execute(
-        "UPDATE transactions SET status='returned', return_date=?, fine=? WHERE id=?",
+        "UPDATE transactions SET status='returned', return_date=%s, fine=%s WHERE id=%s",
         (date.today(), fine, trans["id"])
     )
 
-    cur.execute("UPDATE books SET quantity = quantity + 1 WHERE id=?", (book_id,))
+    cur.execute("UPDATE books SET quantity = quantity + 1 WHERE id=%s", (book_id,))
 
     conn.commit()
     conn.close()
