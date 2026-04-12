@@ -1,19 +1,16 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import psycopg2
+import psycopg2.extras
 import os
 import bcrypt
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
 
 app = Flask(__name__)
 app.secret_key = "secret123"
 
 # ------------------ DB CONNECTION ------------------
-import psycopg2
-import os
-
 def get_db_connection():
-    conn = psycopg2.connect(os.environ.get("DATABASE_URL"))
-    return conn
+    return psycopg2.connect(os.environ.get("DATABASE_URL"))
 
 # ------------------ HOME ------------------
 @app.route('/')
@@ -34,7 +31,7 @@ def register():
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
         conn = get_db_connection()
-        cur = conn.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         cur.execute(
             "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
@@ -56,7 +53,7 @@ def login():
         password = request.form.get('password')
 
         conn = get_db_connection()
-        cur = conn.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         cur.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
@@ -88,7 +85,7 @@ def view_books():
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("SELECT * FROM books")
     books = cur.fetchall()
@@ -109,7 +106,7 @@ def add_book():
         quantity = request.form.get('quantity')
 
         conn = get_db_connection()
-        cur = conn.cursor()
+        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
         cur.execute(
             "INSERT INTO books (title, author, quantity) VALUES (%s, %s, %s)",
@@ -130,7 +127,7 @@ def issue_book(book_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
     user = cur.fetchone()
@@ -163,7 +160,7 @@ def return_book(book_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
     cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
     user = cur.fetchone()
@@ -179,7 +176,7 @@ def return_book(book_id):
     if not trans:
         return "No book issued ❌"
 
-    due_date = datetime.strptime(trans["due_date"], "%Y-%m-%d").date()
+    due_date = trans["due_date"]
     days_late = (date.today() - due_date).days
     fine = max(0, days_late * 5)
 
