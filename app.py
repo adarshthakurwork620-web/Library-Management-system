@@ -10,7 +10,10 @@ app.secret_key = "secret123"
 
 # ------------------ DB CONNECTION ------------------
 def get_db_connection():
-    return psycopg2.connect(os.environ.get("postgresql://library_db_9qy8_user:NRKVSQafCs3F4AGbuWsR8SJcEpzOfHK3@dpg-d7do5vd7vvec73etufb0-a.ohio-postgres.render.com/library_db_9qy8"))
+    return psycopg2.connect(
+        os.environ.get("postgresql://library_db_9qy8_user:NRKVSQafCs3F4AGbuWsR8SJcEpzOfHK3@dpg-d7do5vd7vvec73etufb0-a/library_db_9qy8.ohio-postgres.render.com"),
+        sslmode='require'
+    )
 
 # ------------------ HOME ------------------
 @app.route('/')
@@ -31,7 +34,7 @@ def register():
         hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
         conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cur = conn.cursor()
 
         cur.execute(
             "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
@@ -39,6 +42,7 @@ def register():
         )
 
         conn.commit()
+        cur.close()
         conn.close()
 
         return redirect(url_for('login'))
@@ -53,17 +57,20 @@ def login():
         password = request.form.get('password')
 
         conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cur = conn.cursor()
 
         cur.execute("SELECT * FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
 
+        cur.close()
+        conn.close()
+
         if user:
-            stored_password = user["password"]
+            stored_password = user[3]  # password column
 
             if bcrypt.checkpw(password.encode('utf-8'), stored_password):
-                session['user'] = user["email"]
-                session['role'] = user["role"]
+                session['user'] = user[2]   # email
+                session['role'] = user[4]   # role
                 return redirect(url_for('view_books'))
             else:
                 return "Invalid Password ❌"
@@ -85,11 +92,12 @@ def view_books():
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur = conn.cursor()
 
     cur.execute("SELECT * FROM books")
     books = cur.fetchall()
 
+    cur.close()
     conn.close()
 
     return render_template("view_books.html", books=books, role=session.get('role'))
@@ -106,7 +114,7 @@ def add_book():
         quantity = request.form.get('quantity')
 
         conn = get_db_connection()
-        cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+        cur = conn.cursor()
 
         cur.execute(
             "INSERT INTO books (title, author, quantity) VALUES (%s, %s, %s)",
@@ -114,6 +122,7 @@ def add_book():
         )
 
         conn.commit()
+        cur.close()
         conn.close()
 
         return redirect(url_for('view_books'))
@@ -127,16 +136,16 @@ def issue_book(book_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur = conn.cursor()
 
     cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
     user = cur.fetchone()
-    user_id = user["id"]
+    user_id = user[0]
 
     cur.execute("SELECT quantity FROM books WHERE id=%s", (book_id,))
     book = cur.fetchone()
 
-    if book["quantity"] <= 0:
+    if book[0] <= 0:
         return "Not available ❌"
 
     due_date = date.today() + timedelta(days=7)
@@ -149,6 +158,7 @@ def issue_book(book_id):
     cur.execute("UPDATE books SET quantity = quantity - 1 WHERE id=%s", (book_id,))
 
     conn.commit()
+    cur.close()
     conn.close()
 
     return redirect(url_for('view_books'))
@@ -160,11 +170,11 @@ def return_book(book_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
+    cur = conn.cursor()
 
     cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
     user = cur.fetchone()
-    user_id = user["id"]
+    user_id = user[0]
 
     cur.execute("""
         SELECT id, due_date FROM transactions 
@@ -176,18 +186,19 @@ def return_book(book_id):
     if not trans:
         return "No book issued ❌"
 
-    due_date = trans["due_date"]
+    due_date = trans[1]
     days_late = (date.today() - due_date).days
     fine = max(0, days_late * 5)
 
     cur.execute(
         "UPDATE transactions SET status='returned', return_date=%s, fine=%s WHERE id=%s",
-        (date.today(), fine, trans["id"])
+        (date.today(), fine, trans[0])
     )
 
     cur.execute("UPDATE books SET quantity = quantity + 1 WHERE id=%s", (book_id,))
 
     conn.commit()
+    cur.close()
     conn.close()
 
     return f"Returned ✅ Fine: ₹{fine}"
