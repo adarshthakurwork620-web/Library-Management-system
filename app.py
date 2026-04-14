@@ -1,8 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import psycopg2
-import psycopg2.extras
 import os
-import bcrypt
 from datetime import date, timedelta
 
 app = Flask(__name__)
@@ -14,6 +12,7 @@ def get_db_connection():
         "postgresql://library_db_9qy8_user:NRKVSQafCs3F4AGbuWsR8SJcEpzOfHK3@dpg-d7do5vd7vvec73etufb0-a.ohio-postgres.render.com/library_db_9qy8",
         sslmode='require'
     )
+
 # ------------------ HOME ------------------
 @app.route('/')
 def home():
@@ -30,14 +29,12 @@ def register():
         if not name or not email or not password:
             return "All fields required ❌"
 
-        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
-
         conn = get_db_connection()
         cur = conn.cursor()
 
         cur.execute(
             "INSERT INTO users (name, email, password, role) VALUES (%s, %s, %s, %s)",
-            (name, email, hashed_password, "student")
+            (name, email, password, "student")   # ✅ plain password
         )
 
         conn.commit()
@@ -65,9 +62,10 @@ def login():
         conn.close()
 
         if user:
-            stored_password = user[3]  # password column
+            stored_password = str(user[3]).strip()
 
-            if bcrypt.checkpw(password.encode('utf-8'), bytes(stored_password)):
+            # ✅ simple password match
+            if password == stored_password:
                 session['user'] = user[2]   # email
                 session['role'] = user[4]   # role
                 return redirect(url_for('view_books'))

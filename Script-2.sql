@@ -1,19 +1,26 @@
-CREATE TABLE IF NOT EXISTS users (
+DROP TABLE IF EXISTS transactions;
+DROP TABLE IF EXISTS books;
+DROP TABLE IF EXISTS users;
+
+-- USERS TABLE
+CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     name TEXT,
     email TEXT UNIQUE,
-    password BYTEA,
+    password TEXT,
     role TEXT DEFAULT 'student'
 );
 
-CREATE TABLE IF NOT EXISTS books (
+-- BOOKS TABLE
+CREATE TABLE books (
     id SERIAL PRIMARY KEY,
     title TEXT,
     author TEXT,
     quantity INT DEFAULT 1
 );
 
-CREATE TABLE IF NOT EXISTS transactions (
+-- TRANSACTIONS TABLE
+CREATE TABLE transactions (
     id SERIAL PRIMARY KEY,
     user_id INT,
     book_id INT,
@@ -24,13 +31,13 @@ CREATE TABLE IF NOT EXISTS transactions (
     fine INT DEFAULT 0
 );
 
+-- CHECK
 SELECT * FROM users;
 
+delete  from users;
 SELECT * FROM books;
-
 SELECT * FROM transactions;
 
-
-
+-- ADMIN INSERT
 INSERT INTO users (name, email, password, role)
-VALUES ('Admin', 'admin@gmail.com', '$2b$12$KIXQ9wHc3GZ8q3WfQ8eZ5u1zQm6Zz5K0Q6QmFhV3bXGzRz7F1Yh2G', 'admin');
+VALUES ('Admin', 'admin@gmail.com', 'Adarsh@123', 'admin');
