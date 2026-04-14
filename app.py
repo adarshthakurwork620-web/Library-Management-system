@@ -11,10 +11,9 @@ app.secret_key = "secret123"
 # ------------------ DB CONNECTION ------------------
 def get_db_connection():
     return psycopg2.connect(
-        os.environ.get("postgresql://library_db_9qy8_user:NRKVSQafCs3F4AGbuWsR8SJcEpzOfHK3@dpg-d7do5vd7vvec73etufb0-a.ohio-postgres.render.com/library_db_9qy8"),
+        "postgresql://library_db_9qy8_user:NRKVSQafCs3F4AGbuWsR8SJcEpzOfHK3@dpg-d7do5vd7vvec73etufb0-a.ohio-postgres.render.com/library_db_9qy8",
         sslmode='require'
     )
-
 # ------------------ HOME ------------------
 @app.route('/')
 def home():
@@ -68,7 +67,7 @@ def login():
         if user:
             stored_password = user[3]  # password column
 
-            if bcrypt.checkpw(password.encode('utf-8'), stored_password):
+            if bcrypt.checkpw(password.encode('utf-8'), bytes(stored_password)):
                 session['user'] = user[2]   # email
                 session['role'] = user[4]   # role
                 return redirect(url_for('view_books'))
