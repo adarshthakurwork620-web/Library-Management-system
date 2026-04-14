@@ -34,7 +34,7 @@ CREATE TABLE transactions (
 -- CHECK
 SELECT * FROM users;
 
-delete  from users;
+delete  from transactions;
 
 SELECT * FROM books;
 
