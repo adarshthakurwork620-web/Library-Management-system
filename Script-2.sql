@@ -35,9 +35,13 @@ CREATE TABLE transactions (
 SELECT * FROM users;
 
 delete  from users;
+
 SELECT * FROM books;
+
 SELECT * FROM transactions;
 
+SELECT id, email, password FROM users;
+
 -- ADMIN INSERT
-INSERT INTO users (name, email, password, role)
-VALUES ('Admin', 'admin@gmail.com', 'Adarsh@123', 'admin');
+INSERT INTO users (id,name, email, password, role)
+VALUES ('1','Admin', 'admin@gmail.com', '1234', 'admin');

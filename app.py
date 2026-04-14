@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for, session
 import psycopg2
 import os
 from datetime import date, timedelta
+from datetime import date, datetime
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -17,7 +18,103 @@ def get_db_connection():
 @app.route('/')
 def home():
     return render_template("index.html")
+# ------------------ DASHBOARD ------------------
+@app.route('/dashboard')
+def dashboard():
 
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # ---------------- ADMIN ----------------
+    if session.get('role') == 'admin':
+
+        # All transactions
+        cur.execute("""
+            SELECT users.name, books.title, transactions.issue_date, 
+                   transactions.due_date, transactions.status, transactions.fine
+            FROM transactions
+            JOIN users ON users.id = transactions.user_id
+            JOIN books ON books.id = transactions.book_id
+            ORDER BY transactions.issue_date DESC
+        """)
+        all_transactions = cur.fetchall()
+
+        # Most issued book
+        cur.execute("""
+            SELECT books.title, COUNT(*) as total
+            FROM transactions
+            JOIN books ON books.id = transactions.book_id
+            GROUP BY books.title
+            ORDER BY total DESC
+            LIMIT 1
+        """)
+        most_book = cur.fetchone()
+
+        # Total fine
+        cur.execute("SELECT SUM(fine) FROM transactions")
+        total_fine = cur.fetchone()[0] or 0
+
+        # Stats
+        cur.execute("SELECT COUNT(*) FROM books")
+        total_books = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM users WHERE role='student'")
+        total_users = cur.fetchone()[0]
+
+        cur.execute("SELECT COUNT(*) FROM transactions")
+        total_transactions = cur.fetchone()[0]
+
+        cur.close()
+        conn.close()
+
+        return render_template(
+            "dashboard.html",
+            role="admin",
+            total_books=total_books,
+            total_users=total_users,
+            total_transactions=total_transactions,
+            most_book=most_book,
+            total_fine=total_fine,
+            all_transactions=all_transactions
+        )
+
+    # ---------------- STUDENT ----------------
+    else:
+        cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
+        user = cur.fetchone()
+        user_id = user[0]
+
+        # Total books
+        cur.execute("SELECT COUNT(*) FROM books")
+        total_books = cur.fetchone()[0]
+
+        # Issued books
+        cur.execute("""
+            SELECT COUNT(*) FROM transactions 
+            WHERE user_id=%s AND status='issued'
+        """, (user_id,))
+        issued_books = cur.fetchone()[0]
+
+        # Returned books
+        cur.execute("""
+            SELECT COUNT(*) FROM transactions 
+            WHERE user_id=%s AND status='returned'
+        """, (user_id,))
+        returned_books = cur.fetchone()[0]
+
+        cur.close()
+        conn.close()
+
+        return render_template(
+            "dashboard.html",
+            role="student",
+            total_books=total_books,
+            issued_books=issued_books,
+            returned_books=returned_books
+        )
 # ------------------ REGISTER ------------------
 @app.route('/register', methods=['GET', 'POST'])
 def register():
@@ -55,26 +152,24 @@ def login():
         conn = get_db_connection()
         cur = conn.cursor()
 
-        cur.execute("SELECT * FROM users WHERE email=%s", (email,))
+        cur.execute("SELECT email, password, role FROM users WHERE email=%s", (email,))
         user = cur.fetchone()
-
         cur.close()
         conn.close()
 
         if user:
-            stored_password = str(user[3]).strip()
-
-            # ✅ simple password match
-            if password == stored_password:
-                session['user'] = user[2]   # email
-                session['role'] = user[4]   # role
-                return redirect(url_for('view_books'))
+            db_email, db_password, db_role = user    
+            # FIX memory issue
+            db_password = bytes(db_password).decode('utf-8')       
+            if password.strip() == db_password.strip():
+                session['user'] = db_email
+                session['role'] = db_role
+                return redirect('/view_books')
             else:
                 return "Invalid Password ❌"
-        else:
-            return "User not found ❌"
 
     return render_template("login.html")
+
 
 # ------------------ LOGOUT ------------------
 @app.route('/logout')
@@ -199,6 +294,100 @@ def return_book(book_id):
     conn.close()
 
     return f"Returned ✅ Fine: ₹{fine}"
+
+# ------------------ MY BOOKS ------------------
+from datetime import date
+
+@app.route('/my_books')
+def my_books():
+
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("""
+        SELECT books.title, transactions.issue_date, 
+               transactions.return_date, transactions.status, transactions.fine
+        FROM transactions
+        JOIN books ON transactions.book_id = books.id
+        JOIN users ON transactions.user_id = users.id
+        WHERE users.email=%s
+    """, (session['user'],))
+
+    data = cur.fetchall()
+
+    cur.close()
+    conn.close()
+
+    return render_template(
+        "my_books.html",
+        my_books=data,
+        current_date=date.today()
+    )
+
+
+# ------------------ DELETE BOOK (ADMIN ONLY) ------------------
+@app.route('/delete/<int:id>')
+def delete_book(id):
+
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    if session.get('role') != 'admin':
+        return "Access Denied ❌"
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    cur.execute("DELETE FROM books WHERE id=%s", (id,))
+    conn.commit()
+
+    cur.close()
+    conn.close()
+
+    return redirect(url_for('view_books'))
+
+
+# ------------------ EDIT BOOK (ADMIN ONLY) ------------------
+@app.route('/edit/<int:id>', methods=['GET', 'POST'])
+def edit_book(id):
+
+    if 'user' not in session:
+        return redirect(url_for('login'))
+
+    if session.get('role') != 'admin':
+        return "Access Denied ❌"
+
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # -------- UPDATE --------
+    if request.method == 'POST':
+        title = request.form.get('title')
+        author = request.form.get('author')
+        quantity = request.form.get('quantity')
+
+        cur.execute(
+            "UPDATE books SET title=%s, author=%s, quantity=%s WHERE id=%s",
+            (title, author, quantity, id)
+        )
+
+        conn.commit()
+        cur.close()
+        conn.close()
+
+        return redirect(url_for('view_books'))
+
+    # -------- FETCH --------
+    cur.execute("SELECT * FROM books WHERE id=%s", (id,))
+    book = cur.fetchone()
+
+    cur.close()
+    conn.close()
+
+    return render_template("edit_book.html", book=book)
 
 # ------------------ RUN ------------------
 if __name__ == '__main__':
