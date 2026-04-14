@@ -1,8 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 import psycopg2
+import psycopg2.extras
 import os
 from datetime import date, timedelta
-from datetime import date, datetime
+from datetime import date
 
 app = Flask(__name__)
 app.secret_key = "secret123"
@@ -228,24 +229,44 @@ def issue_book(book_id):
         return redirect(url_for('login'))
 
     conn = get_db_connection()
-    cur = conn.cursor()
+    cur = conn.cursor(cursor_factory=psycopg2.extras.DictCursor)
 
+    # user fetch
     cur.execute("SELECT id FROM users WHERE email=%s", (session['user'],))
     user = cur.fetchone()
-    user_id = user[0]
 
-    cur.execute("SELECT quantity FROM books WHERE id=%s", (book_id,))
+    if not user:
+        return "User not found ❌"
+
+    user_id = user["id"]
+
+    # check already issued
+    cur.execute("""
+        SELECT * FROM transactions
+        WHERE user_id=%s AND status='issued'
+    """, (user_id,))
+    
+    if cur.fetchone():
+        return "Already have a book ❌"
+
+    # book fetch
+    cur.execute("SELECT * FROM books WHERE id=%s", (book_id,))
     book = cur.fetchone()
 
-    if book[0] <= 0:
+    if not book:
+        return "Book not found ❌"
+
+    if book["quantity"] <= 0:
         return "Not available ❌"
 
+    # issue
     due_date = date.today() + timedelta(days=7)
 
-    cur.execute(
-        "INSERT INTO transactions (user_id, book_id, issue_date, due_date, status) VALUES (%s, %s, %s, %s, %s)",
-        (user_id, book_id, date.today(), due_date, "issued")
-    )
+    cur.execute("""
+        INSERT INTO transactions 
+        (user_id, book_id, issue_date, due_date, status) 
+        VALUES (%s, %s, %s, %s, %s)
+    """, (user_id, book_id, date.today(), due_date, "issued"))
 
     cur.execute("UPDATE books SET quantity = quantity - 1 WHERE id=%s", (book_id,))
 
@@ -296,11 +317,9 @@ def return_book(book_id):
     return f"Returned ✅ Fine: ₹{fine}"
 
 # ------------------ MY BOOKS ------------------
-from datetime import date
 
 @app.route('/my_books')
 def my_books():
-
     if 'user' not in session:
         return redirect(url_for('login'))
 
@@ -308,25 +327,39 @@ def my_books():
     cur = conn.cursor()
 
     cur.execute("""
-        SELECT books.title, transactions.issue_date, 
-               transactions.return_date, transactions.status, transactions.fine
+        SELECT books.title, transactions.issue_date, transactions.due_date,
+               transactions.status, transactions.fine, transactions.book_id
         FROM transactions
         JOIN books ON transactions.book_id = books.id
         JOIN users ON transactions.user_id = users.id
         WHERE users.email=%s
+        ORDER BY transactions.issue_date DESC
     """, (session['user'],))
 
     data = cur.fetchall()
+
+    fixed_data = []
+    for row in data:
+        row = list(row)
+
+        # 🔥 FIX: agar due_date NULL hai → safe value de
+        if row[2] is None:
+            row[2] = date.today()  # crash avoid
+
+        # 🔥 fine bhi None ho sakta hai
+        if row[4] is None:
+            row[4] = 0
+
+        fixed_data.append(row)
 
     cur.close()
     conn.close()
 
     return render_template(
         "my_books.html",
-        my_books=data,
+        my_books=fixed_data,
         current_date=date.today()
     )
-
 
 # ------------------ DELETE BOOK (ADMIN ONLY) ------------------
 @app.route('/delete/<int:id>')
