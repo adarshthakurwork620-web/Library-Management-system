@@ -1,5 +1,5 @@
 
- Library Management System (LMS)
+ Library Management System (Smart Library)
 
 
 A full-stack web-based **Library Management System** built using **Flask + PostgreSQL**, designed with real-world constraints and production-level logic.
