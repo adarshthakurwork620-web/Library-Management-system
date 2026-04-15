@@ -114,21 +114,21 @@ id | user_id | book_id | issue_date | due_date | return_date | status | fine
 
 ---
 
-## 🔄 Workflow
+ Workflow
 
-### 📌 Issue Book
-1. Check user login  
-2. Check existing issued book  
-3. Check book availability  
-4. Insert transaction  
-5. Reduce book quantity  
+Issue Book
+ Check user login  
+ Check existing issued book  
+ Check book availability  
+ Insert transaction  
+ Reduce book quantity  
 
- 📌 Return Book
-1. Fetch issued record  
-2. Calculate delay  
-3. Calculate fine  
-4. Update transaction  
-5. Increase book quantity  
+ Return Book
+ Fetch issued record  
+ Calculate delay  
+ Calculate fine  
+ Update transaction  
+ Increase book quantity  
 
 ---
 
@@ -136,17 +136,24 @@ Deployment
 
 Deployed on Render Cloud Platform using:
 
+
 Gunicorn
+
 PostgreSQL managed DB
+
 Environment variables
 
 
 Future Improvements
 
  Email notifications (due reminders)
+ 
  Mobile App Version
+ 
  Online Fine Payment
+ 
  Advanced Analytics Dashboard
+ 
  Multi-book issue system
 
 Conclusion
@@ -154,8 +161,11 @@ Conclusion
 This project demonstrates:
 
  backend logic
+ 
  Database management
+ 
  Real-world constraints implementation
+ 
  Full-stack development
 
 
