@@ -14,12 +14,19 @@ A full-stack web-based **Library Management System** built using **Flask + Postg
  Key Highlights
 
    Role-Based Authentication (Admin / Student)
+   
    Book Issue & Return System
+   
    One Active Book Per User (Real-world constraint)
+   
    Auto Due Date (7 Days)
+   
    Fine Calculation (₹5/day)
+   
    Real-time Validation & Error Handling
+   
    PostgreSQL Cloud Database (Render)
+   
    Modern UI (Tailwind CSS)
 
 ---
@@ -52,16 +59,22 @@ PostgreSQL Database
 
   Admin
   
-- Add / Edit / Delete Books  
-- View All Transactions  
-- Monitor Users  
+- Add / Edit / Delete Books
+-  
+- View All Transactions
+- 
+- Monitor Users
+- 
 - Dashboard Analytics  
 
  Student
  
-- View Books  
-- Issue Book (only 1 at a time)  
-- Return Book  
+- View Books
+- 
+- Issue Book (only 1 at a time)
+-  
+- Return Book
+- 
 - View Personal Records (My Books)  
 
 ---
@@ -69,10 +82,15 @@ PostgreSQL Database
  Business Logic (Important)
 
  A user can issue **only one book at a time**
+ 
  Book cannot be issued if quantity = 0
+ 
  Duplicate issue is prevented
+ 
  Due date = Issue Date + 7 Days
+ 
  Fine = ₹5 per day after due date
+ 
  Safe handling of NULL values (no crashes)
 
 ---
