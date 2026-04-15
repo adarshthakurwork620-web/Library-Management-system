@@ -142,3 +142,31 @@ pip install -r requirements.txt
 
 python app.py
 
+
+🌍 Deployment
+
+Deployed on Render Cloud Platform using:
+
+Gunicorn
+PostgreSQL managed DB
+Environment variables
+
+
+Future Improvements
+
+ Email notifications (due reminders)
+ Mobile App Version
+ Online Fine Payment
+ Advanced Analytics Dashboard
+ Multi-book issue system
+
+Conclusion
+
+This project demonstrates:
+
+ backend logic
+ Database management
+ Real-world constraints implementation
+ Full-stack development
+
+
