@@ -1,30 +1,30 @@
 
-# 📚 Library Management System (LMS)
+ Library Management System (LMS)
 
 
 A full-stack web-based **Library Management System** built using **Flask + PostgreSQL**, designed with real-world constraints and production-level logic.
 
 ---
 
-## 🚀 Live Demo
+ Live Demo
 🌐 https://library-management-system-8brx.onrender.com
 
 ---
 
-## 🧠 Key Highlights
+ Key Highlights
 
-- 🔐 Role-Based Authentication (Admin / Student)
-- 📖 Book Issue & Return System
-- ⛔ One Active Book Per User (Real-world constraint)
-- 📅 Auto Due Date (7 Days)
-- 💸 Fine Calculation (₹5/day)
-- ⚡ Real-time Validation & Error Handling
-- 🧩 PostgreSQL Cloud Database (Render)
-- 🎨 Modern UI (Tailwind CSS)
+   Role-Based Authentication (Admin / Student)
+   Book Issue & Return System
+   One Active Book Per User (Real-world constraint)
+   Auto Due Date (7 Days)
+   Fine Calculation (₹5/day)
+   Real-time Validation & Error Handling
+   PostgreSQL Cloud Database (Render)
+   Modern UI (Tailwind CSS)
 
 ---
 
-## 🏗️ Tech Stack
+ Tech Stack
 
 | Layer      | Technology |
 |------------|-----------|
@@ -33,8 +33,51 @@ A full-stack web-based **Library Management System** built using **Flask + Postg
 | Database   | PostgreSQL (Render Cloud) |
 | Deployment | Render |
 | Tools      | VS Code, GitHub |
+---
+
+ System Architecture
+
+User (Browser)
+↓
+Frontend (HTML + Tailwind)
+↓
+Flask Backend (Routing + Logic)
+↓
+PostgreSQL Database
+
 
 ---
 
-## ⚙️ System Architecture
+  Features
+
+  Admin
+  
+- Add / Edit / Delete Books  
+- View All Transactions  
+- Monitor Users  
+- Dashboard Analytics  
+
+ Student
+ 
+- View Books  
+- Issue Book (only 1 at a time)  
+- Return Book  
+- View Personal Records (My Books)  
+
+---
+
+ Business Logic (Important)
+
+ A user can issue **only one book at a time**
+ Book cannot be issued if quantity = 0
+ Duplicate issue is prevented
+ Due date = Issue Date + 7 Days
+ Fine = ₹5 per day after due date
+ Safe handling of NULL values (no crashes)
+
+---
+
+ Database Schema
+
+ Users
 
