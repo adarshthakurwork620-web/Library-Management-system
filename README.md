@@ -110,3 +110,35 @@ Transactions
 
 id | user_id | book_id | issue_date | due_date | return_date | status | fine
 
+
+
+---
+
+## 🔄 Workflow
+
+### 📌 Issue Book
+1. Check user login  
+2. Check existing issued book  
+3. Check book availability  
+4. Insert transaction  
+5. Reduce book quantity  
+
+ 📌 Return Book
+1. Fetch issued record  
+2. Calculate delay  
+3. Calculate fine  
+4. Update transaction  
+5. Increase book quantity  
+
+---
+
+🚀 Setup Instructions
+
+```bash
+git clone https://github.com/your-username/library-management-system.git
+cd library-management-system
+
+pip install -r requirements.txt
+
+python app.py
+
