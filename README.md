@@ -143,6 +143,7 @@ PostgreSQL managed DB
 
 Environment variables
 
+---
 
 Future Improvements
 
@@ -156,16 +157,6 @@ Future Improvements
  
  Multi-book issue system
 
-Conclusion
-
-This project demonstrates:
-
- backend logic
- 
- Database management
- 
- Real-world constraints implementation
- 
- Full-stack development
+---
 
 
