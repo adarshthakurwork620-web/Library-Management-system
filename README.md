@@ -99,3 +99,14 @@ PostgreSQL Database
 
  Users
 
+ id | name | email | password | role
+
+Books
+
+id | title | author | quantity
+
+
+Transactions
+
+id | user_id | book_id | issue_date | due_date | return_date | status | fine
+
