@@ -1,53 +1,141 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" class="scroll-smooth">
 <head>
-    <title>Register</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Library System</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- FONT -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+body { font-family: 'Inter', sans-serif; }
+.glass {
+    backdrop-filter: blur(12px);
+    background: rgba(255,255,255,0.1);
+}
+</style>
+
 </head>
 
-<body class="bg-gradient-to-r from-green-400 to-blue-500  items-center justify-center justify-items-center h-screen">
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-black text-white">
 
-<div class="text-center text-white mt-10 px-4">
-    <h2 class="text-4xl md:text-5xl font-bold mb-4">
-        Smart Library Management System
-    </h2>
-    <p class="text-lg opacity-90">
-        Manage books, track records, and simplify your library operations 🚀
-    </p>
+<!-- NAVBAR -->
+<nav class="glass fixed w-full top-0 z-50 border-b border-white/10">
+<div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+
+<h1 class="text-xl font-bold">📚 LMS</h1>
+
+<div class="space-x-6 hidden md:flex">
+<a href="#features" class="hover:text-blue-400 transition">Features</a>
+<a href="#about" class="hover:text-blue-400 transition">About</a>
 </div>
 
- <div class="space-x-2">
-        
-          <a
-            href="/login"
-            class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:opacity-90"
-            >Login</a
-          >
-
-          <a
-            href="/register"
-            class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:opacity-90"
-            >Register</a
-          >
-
-<!-- FEATURES -->
-<div class="grid md:grid-cols-3 gap-6 mt-12 px-6 text-white">
-
-    <div class="bg-white/20 backdrop-blur-lg p-6 rounded-xl shadow-lg text-center">
-        <h3 class="text-xl font-bold mb-2">📊 Analytics</h3>
-        <p>Track issued books, returns, and fines easily.</p>
-    </div>
-
-    <div class="bg-white/20 backdrop-blur-lg p-6 rounded-xl shadow-lg text-center">
-        <h3 class="text-xl font-bold mb-2">👤 Role Based</h3>
-        <p>Separate dashboards for Admin and Students.</p>
-    </div>
-
-    <div class="bg-white/20 backdrop-blur-lg p-6 rounded-xl shadow-lg text-center">
-        <h3 class="text-xl font-bold mb-2">⚡ Fast & Simple</h3>
-        <p>Clean UI with fast operations and easy navigation.</p>
-    </div>
+<div class="space-x-3">
+<a href="/login" class="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 transition">Login</a>
+<a href="/register" class="px-4 py-2 rounded-lg border border-white/30 hover:bg-white/10 transition">Register</a>
+</div>
 
 </div>
+</nav>
+
+<!-- HERO -->
+<section class="min-h-screen flex items-center justify-center text-center px-6">
+
+<div class="max-w-3xl">
+
+<h1 class="text-5xl md:text-6xl font-bold leading-tight mb-6">
+<span class="bg-gradient-to-r from-blue-400 to-purple-500 text-transparent bg-clip-text">
+Smart Library Management
+</span>
+</h1>
+
+<p class="text-gray-300 mb-8 text-lg">
+Manage books, track issues, calculate fines, and control users — all in one powerful system.
+</p>
+
+<div class="space-x-4">
+<a href="/register" class="px-6 py-3 bg-blue-500 rounded-xl hover:scale-105 hover:shadow-2xl transition duration-500">
+Get Started
+</a>
+
+<a href="/login" class="px-6 py-3 border border-white/30 rounded-xl hover:bg-white/10 transition duration-500">
+Login
+</a>
+</div>
+
+</div>
+
+</section>
+
+<!-- FEATURES (BENTO GRID) -->
+<section id="features" class="py-20 px-6 max-w-7xl mx-auto">
+
+<h2 class="text-3xl font-bold text-center mb-12">⚡ Features</h2>
+
+<div class="grid md:grid-cols-4 gap-6">
+
+<!-- BIG CARD -->
+<div class="col-span-2 row-span-2 glass p-6 rounded-2xl hover:scale-105 hover:shadow-2xl transition duration-500">
+<h3 class="text-xl font-bold mb-2">📚 Smart Book System</h3>
+<p class="text-gray-300">Issue, return, and track books with real-time updates and validations.</p>
+</div>
+
+<!-- SMALL CARDS -->
+<div class="glass p-6 rounded-2xl hover:scale-105 hover:shadow-xl transition duration-500">
+<h3 class="font-bold">🔐 Secure Login</h3>
+<p class="text-sm text-gray-300">Session-based authentication</p>
+</div>
+
+<div class="glass p-6 rounded-2xl hover:scale-105 hover:shadow-xl transition duration-500">
+<h3 class="font-bold">👤 Role System</h3>
+<p class="text-sm text-gray-300">Admin & Student dashboards</p>
+</div>
+
+<div class="glass p-6 rounded-2xl hover:scale-105 hover:shadow-xl transition duration-500">
+<h3 class="font-bold">⏳ Due Date</h3>
+<p class="text-sm text-gray-300">Auto 7-day tracking</p>
+</div>
+
+<div class="glass p-6 rounded-2xl hover:scale-105 hover:shadow-xl transition duration-500">
+<h3 class="font-bold">💰 Fine System</h3>
+<p class="text-sm text-gray-300">₹5/day late fee</p>
+</div>
+
+</div>
+
+</section>
+
+<!-- ABOUT -->
+<section id="about" class="py-20 px-6 text-center">
+
+<h2 class="text-3xl font-bold mb-6">🚀 About System</h2>
+
+<p class="max-w-2xl mx-auto text-gray-300">
+This Library Management System is built using Flask and PostgreSQL with real-time validation,
+secure transactions, and modern UI design. It prevents duplicate book issues and ensures
+data consistency across operations.
+</p>
+
+</section>
+
+<!-- CTA -->
+<section class="py-20 text-center">
+
+<h2 class="text-3xl font-bold mb-6">Start Managing Your Library Today</h2>
+
+<a href="/register" class="px-8 py-4 bg-purple-500 rounded-xl hover:scale-105 hover:shadow-2xl transition duration-500">
+Create Free Account
+</a>
+
+</section>
+
+<!-- FOOTER -->
+<footer class="py-6 text-center text-gray-400 border-t border-white/10">
+© 2026 Library Management System | Built by Adarsh 🚀
+</footer>
+
 </body>
 </html>
