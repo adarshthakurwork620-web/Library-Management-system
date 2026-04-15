@@ -132,19 +132,7 @@ id | user_id | book_id | issue_date | due_date | return_date | status | fine
 
 ---
 
-🚀 Setup Instructions
-
-```bash
-git clone https://github.com/adarshthakurwork620-web/library-management-system.git
-cd library-management-system
-
-pip install -r requirements.txt
-
-python app.py
-
----
-
-🌍 Deployment
+Deployment
 
 Deployed on Render Cloud Platform using:
 
