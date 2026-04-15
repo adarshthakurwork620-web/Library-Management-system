@@ -60,21 +60,21 @@ PostgreSQL Database
   Admin
   
 - Add / Edit / Delete Books
--  
+  
 - View All Transactions
-- 
+ 
 - Monitor Users
-- 
+  
 - Dashboard Analytics  
 
  Student
  
 - View Books
-- 
+ 
 - Issue Book (only 1 at a time)
--  
+   
 - Return Book
-- 
+ 
 - View Personal Records (My Books)  
 
 ---
