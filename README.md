@@ -46,12 +46,15 @@ A full-stack web-based **Library Management System** built using **Flask + Postg
  System Architecture
 
 User (Browser)
+
 ↓
 
 Frontend (HTML + Tailwind)
+
 ↓
 
 Flask Backend (Routing + Logic)
+
 ↓
 
 PostgreSQL Database
