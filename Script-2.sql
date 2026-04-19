@@ -44,4 +44,4 @@ SELECT id, email, password FROM users;
 
 -- ADMIN INSERT
 INSERT INTO users (id,name, email, password, role)
-VALUES ('1','Admin', 'admin@gmail.com', '1234', 'admin');
+VALUES ('1','Admin', '********', '****', 'admin');
